@@ -3,6 +3,15 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { pool } from "./config/database.js";
+import mysql from "mysql";
+
+const db = mysql.createConnection({
+  user: "root",
+  password: "thanhtai",
+  host: "localhost",
+  port: 3306,
+  database: "health",
+});
 
 const app = express();
 
@@ -19,9 +28,11 @@ app.use(
 
 app.get("/", async (req, res) => {
   console.log("Hello World");
-  let data = await pool.query("SELECT * FROM patient");
-  console.log(data.rows[0]);
-  res.json(data.rows[0]);
+  let data = await db.query("SELECT * FROM nurse", (err, result) => {
+    if (err) throw err;
+    console.log(result);
+    res.json(result);
+  });
 });
 
 app.listen(3600, () => {
