@@ -1,0 +1,40 @@
+.nav-bar {
+  color: rgb(255, 255, 255);
+  background-color: #046f8b;
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 5rem;
+  font-weight: 500;
+  font-size: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.right {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-bar .logo {
+  height: 4rem;
+  width: auto;
+}
+
+.nav-bar .menu {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.nav-bar a {
+  color: white;
+}
+
+.nav-bar a:hover {
+  color: #f0f0f0;
+}
