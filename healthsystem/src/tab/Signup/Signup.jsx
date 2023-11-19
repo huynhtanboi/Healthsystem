@@ -4,51 +4,54 @@ import { useState } from "react";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
-    middlename: '',
-    ssn: '',
-    age: '',
-    gender: '',
-    race: '',
-    occupation: '',
-    phone: '',
-    address: '',
-    medicalHistory: '',
-    username: '',
-    password: '',
+    firstname: "",
+    lastname: "",
+    middlename: "",
+    ssn: "",
+    age: "",
+    gender: "",
+    race: "",
+    occupation: "",
+    phone: "",
+    address: "",
+    medicalHistory: "",
+    username: "",
+    password: "",
   });
 
   const handleClick = async () => {
     console.log("clicked");
     // e.preventDefault();
-    const response = await fetch('http://localhost:3600/signup', {
-      method: 'POST',
+    const response = await fetch("http://localhost:3600/signup", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
 
-   
-
-    if (response.ok) {
-      console.log('Data sent successfully');
-    }
-    const data = await response.json()
+    const data = await response.json();
     console.log(data);
-
-
-    //   // Save data to CSV file
-    //   const csvData = Object.values(formData).join(',');
-    //   const blob = new Blob([csvData], { type: 'text/csv' });
-    //   const link = document.createElement('a');
-    //   link.href = URL.createObjectURL(blob);
-    //   link.download = 'patient.csv';
-    //   link.click();
-    // } else {
-    //   console.error('Error sending data');
-    // }
+    if (data) {
+      window.location.assign("/login");
+    } else {
+      alert("Something went wrong! Try again or call the IT supports.");
+      setFormData({
+        firstname: "",
+        lastname: "",
+        middlename: "",
+        ssn: "",
+        age: "",
+        gender: "",
+        race: "",
+        occupation: "",
+        phone: "",
+        address: "",
+        medicalHistory: "",
+        username: "",
+        password: "",
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -67,6 +70,7 @@ const Signup = () => {
               type="text"
               name="firstname"
               onChange={handleChange}
+              value={formData.firstname}
               required
             />
             <input
@@ -74,6 +78,7 @@ const Signup = () => {
               placeholder="last name"
               type="text"
               name="lastname"
+              value={formData.lastname}
               onChange={handleChange}
               required
             />
@@ -82,6 +87,7 @@ const Signup = () => {
               placeholder="middle name (optional)"
               type="text"
               name="middlename"
+              value={formData.middlename}
               onChange={handleChange}
             />
           </div>
@@ -91,15 +97,16 @@ const Signup = () => {
               placeholder="ssn"
               type="text"
               name="ssn"
+              value={formData.ssn}
               onChange={handleChange}
               required
-              
             />
             <input
               className="Age"
               placeholder="age"
               type="number"
               name="age"
+              value={formData.age}
               onChange={handleChange}
               required
             />
@@ -108,6 +115,7 @@ const Signup = () => {
               placeholder="gender"
               type="text"
               name="gender"
+              value={formData.gender}
               onChange={handleChange}
             />
           </div>
@@ -117,6 +125,7 @@ const Signup = () => {
               placeholder="race"
               type="text"
               name="race"
+              value={formData.race}
               onChange={handleChange}
               required
             />
@@ -125,6 +134,7 @@ const Signup = () => {
               placeholder="occupation (optional)"
               type="text"
               name="occupation"
+              value={formData.occupation}
               onChange={handleChange}
             />
             <input
@@ -132,6 +142,7 @@ const Signup = () => {
               placeholder="phone number (optional)"
               type="number"
               name="phone"
+              value={formData.phone}
               onChange={handleChange}
             />
           </div>
@@ -139,22 +150,37 @@ const Signup = () => {
             className="address"
             placeholder="address (optional)"
             type="text"
+            name="address"
+            value={formData.address}
             onChange={handleChange}
           ></input>
           <input
             className="medical-history"
             placeholder="medical-history (optional)"
             type="text"
+            name="medicalHistory"
+            value={formData.medicalHistory}
             onChange={handleChange}
           ></input>
 
           <div className="account">
-            <input placeholder="username" type="text" name="username" onChange={handleChange}/>
-            <input placeholder="password" type="password" name="password" onChange={handleChange}/>
-            
+            <input
+              placeholder="username"
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <input
+              placeholder="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
           </div>
 
-          <button type="submit" value="Submit" onClick={handleClick}>
+          <button type="button" value="Submit" onClick={handleClick}>
             Submit
           </button>
         </form>

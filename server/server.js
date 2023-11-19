@@ -48,18 +48,65 @@ app.get("/", async (req, res) => {
 
 app.post("/signup", async (req, res) => {
   console.log("signing up...");
-  const {firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password} = req.body;
-  console.log(firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password);
-  const query = "INSERT INTO patient (firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
-  db.query(query, [firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password], (err, result) => {
-    if (err) {
-      return res.send({ err: err });
+  const {
+    firstname,
+    lastname,
+    middlename,
+    ssn,
+    age,
+    gender,
+    race,
+    occupation,
+    phone,
+    address,
+    medicalHistory,
+    username,
+    password,
+  } = req.body;
+  console.log(
+    firstname,
+    lastname,
+    middlename,
+    ssn,
+    age,
+    gender,
+    race,
+    occupation,
+    phone,
+    address,
+    medicalHistory,
+    username,
+    password
+  );
+  const query =
+    "INSERT INTO patient (Fname, Lname, MI, SSN, Age, Gender, Race, `Occupation Class`, `Medical History Description`, `Phone #`, Address, Username, Password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  db.query(
+    query,
+    [
+      firstname,
+      lastname,
+      middlename,
+      ssn,
+      age,
+      gender,
+      race,
+      occupation,
+      phone,
+      address,
+      medicalHistory,
+      username,
+      password,
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send({ err: err });
+      }
+      console.log("true");
+      return res.send(true);
     }
-    console.log("inserted: ", result);
-  }
-  )
-  res.send("signed up");
-})
+  );
+});
 
 app.post(
   "/login",
