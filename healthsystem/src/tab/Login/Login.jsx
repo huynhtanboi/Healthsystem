@@ -1,11 +1,30 @@
 import "./Login.css";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  // check logged in
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkLogin = async () => {
+      const response = await fetch("http://localhost:3600", {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.loggedIn) {
+        navigate("/");
+      } else {
+        navigate("/login");
+      }
+    };
+    checkLogin();
+  }, []);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -23,11 +42,13 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       const data = await response.json();
-      if (data) {
-        window.location.assign("/");
+      console.log(data);
+      if (data.loggedIn) {
+        navigate("/");
       } else {
         alert("Wrong username or password");
         setFormData({

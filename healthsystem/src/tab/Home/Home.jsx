@@ -1,16 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
+import { LoginContext } from "../../utils/utils";
 const Home = () => {
+  const { loggedIn, user } = useContext(LoginContext);
   useEffect(() => {
-    console.log("Home");
-    const checkLogin = async () => {
-      const response = await fetch("http://localhost:3600");
-      const data = await response.json();
-      console.log(data);
-    };
-    checkLogin();
-  }, []);
+    console.log(LoginContext);
+    console.log(loggedIn, user);
+  }, [loggedIn, user]);
+
   return (
     <div>
       <div className="home">
