@@ -24,10 +24,10 @@ const Login = () => {
         },
         body: JSON.stringify(formData),
       });
+
       const data = await response.json();
-      console.log(data);
       if (data) {
-        window.location.href = data.location;
+        window.location.assign("/");
       } else {
         alert("Wrong username or password");
         setFormData({

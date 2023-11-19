@@ -59,20 +59,19 @@ app.post(
       }
       if (result?.length > 0) {
         console.log(true);
-        return res.send({ location: "/" });
-        // req.session.regenerate(function (err) {
-        //   if (err) next(err);
+        req.session.regenerate(function (err) {
+          if (err) next(err);
 
-        //   // store user information in session, typically a user id
-        //   req.session.user = req.body.user;
+          // store user information in session, typically a user id
+          req.session.user = username;
 
-        //   // save the session before redirection to ensure page
-        //   // load does not happen before session is saved
-        //   // req.session.save(function (err) {
-        //   //   if (err) return next(err);
-        //   //   return res.redirect("/");
-        //   // });
-        // });
+          // save the session before redirection to ensure page
+          // load does not happen before session is saved
+          req.session.save(function (err) {
+            if (err) return next(err);
+            return res.send(true);
+          });
+        });
       } else {
         console.log(false);
         return res.send(false);
