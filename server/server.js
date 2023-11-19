@@ -46,6 +46,21 @@ app.get("/", async (req, res) => {
   console.log("Hello World");
 });
 
+app.post("/signup", async (req, res) => {
+  console.log("signing up...");
+  const {firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password} = req.body;
+  console.log(firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password);
+  const query = "INSERT INTO patient (firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)"
+  db.query(query, [firstname, lastname, middlename, ssn, age, gender, race, occupation, phone, address, medicalHistory, username, password], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log("inserted: ", result);
+  }
+  )
+  res.send("signed up");
+})
+
 app.post(
   "/login",
   express.urlencoded({ extended: false }),

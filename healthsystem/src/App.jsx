@@ -10,7 +10,7 @@ import Login from "./tab/Login/Login";
 import Signup from "./tab/Signup/Signup";
 
 function App() {
-  console.log("chnage");
+  // console.log("chnage");
   return (
     <BrowserRouter>
       <Routes>
