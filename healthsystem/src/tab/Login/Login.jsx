@@ -5,6 +5,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
+    role: "patient",
   });
 
   // check logged in
@@ -26,10 +27,21 @@ const Login = () => {
     checkLogin();
   }, []);
 
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleRoleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      role: e.target.value,
     }));
   };
 
@@ -54,6 +66,7 @@ const Login = () => {
         setFormData({
           username: "",
           password: "",
+          role: "patient",
         });
       }
     };
@@ -79,6 +92,16 @@ const Login = () => {
             value={formData.password}
             onChange={handleChange}
           />
+          <select
+            id="example"
+            name="example"
+            value={formData.role}
+            onChange={handleRoleChange}
+          >
+            <option value="patient">patient</option>
+            <option value="nurse">nurse</option>
+            <option value="admin">admin</option>
+          </select>
           <button type="button" value="Submit" onClick={handleSubmit}>
             Submit
           </button>

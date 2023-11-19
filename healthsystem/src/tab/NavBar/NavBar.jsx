@@ -6,6 +6,7 @@ import "./NavBar.css";
 const NavBar = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState("");
+  const [role, setRole] = useState("");
   // check logged in
   const navigate = useNavigate();
   useEffect(() => {
@@ -19,11 +20,12 @@ const NavBar = () => {
       if (data.loggedIn) {
         setLoggedIn(true);
         setUser(data.user);
+        setRole(data.role);
         navigate("/");
       }
     };
     checkLogin();
-  }, [loggedIn, user, navigate]);
+  }, [loggedIn, user, role, navigate]);
 
   const hamMenu = () => {
     let x = document.getElementById("topnav");
@@ -63,7 +65,7 @@ const NavBar = () => {
               alt="UIH logo"
             />
           </Link>
-          <Link>Request an appointment</Link>
+          <Link to="/appointment">Request an appointment</Link>
         </div>
 
         <div className="menu">
@@ -103,7 +105,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
-      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user }}>
+      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user, role }}>
         <Outlet />
       </LoginContext.Provider>
     </div>

@@ -54,7 +54,11 @@ function isAuthenticated(req, res, next) {
 app.get("/", async (req, res) => {
   if (req.session.user) {
     console.log("session user: ", req.session.user);
-    res.send({ loggedIn: true, user: req.session.user });
+    res.send({
+      loggedIn: true,
+      user: req.session.user,
+      role: req.session.role,
+    });
   } else {
     res.send({ loggedIn: false });
   }
@@ -124,8 +128,12 @@ app.post("/signup", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   console.log("authenticating...");
-  const { username, password } = req.body;
-  const query = "SELECT * FROM patient WHERE username = ? AND password = ?";
+  const { username, password, role } = req.body;
+  console.log("info: ", username, password, role);
+  let roleQuery = `patient`;
+  if (role === "admin") roleQuery = `admin`;
+  else if (role === "nurse") roleQuery = `nurse`;
+  const query = `SELECT * FROM ${roleQuery} WHERE username = ? AND password = ?`;
   db.query(query, [username, password], (err, result) => {
     if (err) {
       return res.send({ err: err });
@@ -138,19 +146,67 @@ app.post("/login", async (req, res) => {
 
         // store user information in session, typically a user id
         req.session.user = username;
+        req.session.role = role;
 
         // save the session before redirection to ensure page
         // load does not happen before session is saved
         req.session.save(function (err) {
           console.log("saving session...");
           if (err) return next(err);
-          return res.send({ loggedIn: true, username: username });
+          return res.send({ loggedIn: true, username: username, role: role });
         });
       });
     } else {
       console.log(false);
       return res.send({ loggedIn: false });
     }
+  });
+});
+
+app.post("/appointment", async (req, res) => {
+  console.log("making appoinment...");
+  const { time } = req.body;
+  console.log(time);
+  // check if time is available
+  const query1 = `SELECT * FROM timeslot WHERE dateinfo = ?`;
+  db.query(query1, [time], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    if (result?.length > 0) {
+      console.log(result[0]);
+      const { idtimeslot, numOfPeople, numOfNurse, availability, dateinfo } =
+        result[0];
+      if (numOfPeople < numOfNurse && availability === "1") {
+        console.log(true);
+        const query2 = `UPDATE timeslot SET numOfPeople = ?, availability = ? WHERE idtimeslot = ?`;
+        db.query(
+          query2,
+          [numOfPeople + 1, numOfPeople + 1 === numOfNurse ? 0 : 1, idtimeslot],
+          (err, result) => {
+            if (err) {
+              return res.send({ err: err });
+            }
+            console.log("true");
+            return res.send(true);
+          }
+        );
+      } else {
+        return res.send(false);
+      }
+    }
+
+    //  else {
+    //   console.log(true);
+    //   const query2 = `INSERT INTO appointment timeslot VALUES (?)`;
+    //   db.query(query2, [time], (err, result) => {
+    //     if (err) {
+    //       return res.send({ err: err });
+    //     }
+    //     console.log("true");
+    //     return res.send(true);
+    //   });
+    // }
   });
 });
 
