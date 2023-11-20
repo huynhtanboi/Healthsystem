@@ -10,6 +10,7 @@ import Login from "./tab/Login/Login";
 import Signup from "./tab/Signup/Signup";
 import AddNurse from "./tab/Admin/AddNurse/AddNurse";
 import Appointment from "./tab/Appointment/Appointment";
+import Profile from "./tab/Profile/Profile";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin/addnurse" element={<AddNurse />} />
           <Route path="/appointment" element={<Appointment />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Routes>
     </BrowserRouter>
