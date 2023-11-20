@@ -175,22 +175,17 @@ app.post("/appointment", async (req, res) => {
     }
     if (result?.length > 0) {
       console.log(result[0]);
-      const { idtimeslot, numOfPeople, numOfNurse, availability, dateinfo } =
-        result[0];
-      if (numOfPeople < numOfNurse && availability === "1") {
+      const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[0];
+      if (numOfPeople < numOfNurse * 10 && numOfPeople < 100) {
         console.log(true);
-        const query2 = `UPDATE timeslot SET numOfPeople = ?, availability = ? WHERE idtimeslot = ?`;
-        db.query(
-          query2,
-          [numOfPeople + 1, numOfPeople + 1 === numOfNurse ? 0 : 1, idtimeslot],
-          (err, result) => {
-            if (err) {
-              return res.send({ err: err });
-            }
-            console.log("true");
-            return res.send(true);
+        const query2 = `UPDATE timeslot SET numOfPeople = ? WHERE idtimeslot = ?`;
+        db.query(query2, [numOfPeople + 1, idtimeslot], (err, result) => {
+          if (err) {
+            return res.send({ err: err });
           }
-        );
+          console.log("true");
+          return res.send(true);
+        });
       } else {
         return res.send(false);
       }
