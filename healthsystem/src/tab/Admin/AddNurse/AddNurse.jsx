@@ -95,6 +95,35 @@ const AddNurse = () => {
               required
             />
           </label>
+          <div className="name">
+            <input
+              className="FirstName"
+              placeholder="First Name"
+              type="text"
+              name="FirstName"
+              onChange={handleChange}
+              value={formData.Fname}
+              required
+            />
+            <input
+              className="MiddleInitial"
+              placeholder="MI"
+              type="text"
+              name="MiddleInitial"
+              onChange={handleChange}
+              value={formData.MI}
+              required
+            />
+            <input
+              className="LastName"
+              placeholder="Last Name"
+              type="text"
+              name="LastName"
+              onChange={handleChange}
+              value={formData.Lname}
+              required
+            />
+            </div>
           <label>
             Age:
             <input
