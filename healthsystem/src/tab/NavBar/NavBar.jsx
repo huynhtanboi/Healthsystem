@@ -21,7 +21,7 @@ const NavBar = () => {
         setLoggedIn(true);
         setUser(data.user);
         setRole(data.role);
-        navigate("/");
+        // navigate("/");
       }
     };
     checkLogin();

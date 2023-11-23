@@ -105,3 +105,8 @@
   background: linear-gradient(130deg, #04708b 70%, rgba(0, 128, 0, 0.42));
   color: white;
 }
+
+.appointment .disabled {
+  background-color: #f4dada;
+  color: #ff0000;
+}

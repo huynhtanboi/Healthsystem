@@ -187,21 +187,34 @@ app.post("/appointment", async (req, res) => {
           return res.send(true);
         });
       } else {
+        console.log("the time slot is full");
         return res.send(false);
+      }
+    } else {
+      console.log("no time slot");
+    }
+  });
+});
+
+app.get("/appointment/:date", async (req, res) => {
+  const date = req.params.date;
+  const query = `SELECT * FROM timeslot WHERE dateinfo LIKE '${date}%'`;
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    // process availabilities
+    const availabilities = [];
+    if (!result.length) return res.send([]);
+    for (let i = 0; i < result.length; i++) {
+      const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[i];
+      const time = dateinfo.split(" ")[1];
+      if (numOfPeople >= numOfNurse * 10 && numOfPeople >= 100) {
+        availabilities.push(time);
       }
     }
 
-    //  else {
-    //   console.log(true);
-    //   const query2 = `INSERT INTO appointment timeslot VALUES (?)`;
-    //   db.query(query2, [time], (err, result) => {
-    //     if (err) {
-    //       return res.send({ err: err });
-    //     }
-    //     console.log("true");
-    //     return res.send(true);
-    //   });
-    // }
+    return res.send(availabilities);
   });
 });
 
