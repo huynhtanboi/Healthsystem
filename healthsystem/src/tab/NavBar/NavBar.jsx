@@ -7,6 +7,7 @@ const NavBar = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState("");
   const [role, setRole] = useState("");
+  const [id, setId] = useState(0);
   // check logged in
   const navigate = useNavigate();
   useEffect(() => {
@@ -21,6 +22,7 @@ const NavBar = () => {
         setLoggedIn(true);
         setUser(data.user);
         setRole(data.role);
+        setId(data.iduser);
         // navigate("/");
       }
     };
@@ -93,9 +95,16 @@ const NavBar = () => {
                   <Link className="drop-link" to="myschedule">
                     My schedule
                   </Link>
-                  <Link className="drop-link" to="/profile">
-                    Profile
-                  </Link>
+                  {role === "patient" && (
+                    <Link className="drop-link" to="/profile/patient">
+                      Profile
+                    </Link>
+                  )}
+                  {role === "nurse" && (
+                    <Link className="drop-link" to="/profile/nurse">
+                      Profile
+                    </Link>
+                  )}
                   <Link className="drop-link" onClick={handleLogout}>
                     Logout
                   </Link>
@@ -105,7 +114,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
-      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user, role }}>
+      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user, role, id }}>
         <Outlet />
       </LoginContext.Provider>
     </div>

@@ -58,6 +58,7 @@ app.get("/", async (req, res) => {
       loggedIn: true,
       user: req.session.user,
       role: req.session.role,
+      iduser: req.session.iduser,
     });
   } else {
     res.send({ loggedIn: false });
@@ -143,17 +144,25 @@ app.post("/login", async (req, res) => {
       req.session.regenerate(function (err) {
         console.log("regenerating session...");
         if (err) next(err);
-
+        console.log(result[0]);
         // store user information in session, typically a user id
         req.session.user = username;
         req.session.role = role;
+        if (role === "patient") req.session.iduser = result[0].idpatient;
+        else if (role === "admin") req.session.iduser = result[0].idadmin;
+        else if (role === "nurse") req.session.iduser = result[0].idnurse;
 
         // save the session before redirection to ensure page
         // load does not happen before session is saved
         req.session.save(function (err) {
           console.log("saving session...");
           if (err) return next(err);
-          return res.send({ loggedIn: true, username: username, role: role });
+          return res.send({
+            loggedIn: true,
+            username: username,
+            role: role,
+            iduser: req.session.id,
+          });
         });
       });
     } else {
@@ -216,6 +225,90 @@ app.get("/appointment/:date", async (req, res) => {
 
     return res.send(availabilities);
   });
+});
+
+app.get("/profile/nurse", async (req, res) => {
+  const id = req.session.iduser;
+  console.log();
+  const query = `SELECT * FROM nurse WHERE idnurse = ?`;
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log(result[0]);
+    return res.send(result[0]);
+  });
+});
+
+app.put("/profile/nurse", async (req, res) => {
+  console.log("updating profile...");
+  const id = req.session.iduser;
+  const { "Phone #": phone, Address } = req.body;
+  console.log(phone, Address);
+  const query = `UPDATE nurse SET \`Phone #\` = ?, Address = ? WHERE idnurse = ?`;
+  db.query(query, [phone, Address, id], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log("true");
+    return res.send(true);
+  });
+});
+
+app.get("/profile/patient", async (req, res) => {
+  console.log("getting patient profile...");
+  const id = req.session.iduser;
+  const query = `SELECT * FROM patient WHERE idpatient = ?`;
+  db.query(query, [id], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log(result[0]);
+    return res.send(result[0]);
+  });
+});
+
+app.put("/profile/patient", async (req, res) => {
+  console.log("updating patient profile...");
+  const id = req.session.iduser;
+  const {
+    Fname,
+    MI,
+    Lname,
+    Age,
+    Address,
+    Gender,
+    "Medical History Description": MedicalHistory,
+    "Phone #": Phone,
+    Race,
+    SSN,
+    Username,
+  } = req.body;
+  const query = `UPDATE patient SET Fname=?, MI=?, Lname=?, Age=?, Address=?, Gender=?, \`Medical History Description\`=?, \`Phone #\`=?, Race=?, SSN=?, Username=? WHERE idpatient = ?`;
+  db.query(
+    query,
+    [
+      Fname,
+      MI,
+      Lname,
+      Age,
+      Address,
+      Gender,
+      MedicalHistory,
+      Phone,
+      Race,
+      SSN,
+      Username,
+      id,
+    ],
+    (err, result) => {
+      if (err) {
+        return res.send({ err: err });
+      }
+      console.log("true");
+      return res.send(true);
+    }
+  );
 });
 
 app.get("/logout", async (req, res) => {

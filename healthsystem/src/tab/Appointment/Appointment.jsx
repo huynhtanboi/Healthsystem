@@ -35,6 +35,8 @@ const Appointment = () => {
           temp[key] = false;
         });
         setTimeSlots(temp);
+      } else {
+        setTimeSlots(timeId);
       }
     };
     checkTime();
