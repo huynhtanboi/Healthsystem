@@ -28,10 +28,12 @@ const AddNurse = () => {
 
 
       const data = await response.json();
-      console.log(data);
+
       if (data) {
-        window.location.assign("/addnurse");
-      } else {
+        window.location.assign("/admin/addnurse");
+      console.log(data);
+      } 
+      else {
         alert("Something went wrong! Try again or call the IT supports.");
         setFormData({
           Fname: '',
@@ -55,7 +57,7 @@ const AddNurse = () => {
     <div className="add-nurse">
       <div className="add-nurse-content">
         <h1>Add Nurse</h1>
-        <form onSubmit={handleSubmit}>
+        <form>
           <div className="name">
             <input
               className="first-name"
@@ -68,12 +70,12 @@ const AddNurse = () => {
             />
             <input
               className="middle-initial"
-              placeholder="MI"
+              placeholder="Middle Initial"
               type="text"
               name="MI"
               onChange={handleChange}
               value={formData.MI}
-              required
+              // required
             />
             <input
               className="last-name"
@@ -85,58 +87,27 @@ const AddNurse = () => {
               required
             />
           </div>
-          <label>
-            Employee ID:
             <input
+            placeholder="Employee ID"
               type="text"
               name="EmployeeID"
               onChange={handleChange}
               value={formData.EmployeeID}
               required
             />
-          </label>
-          <div className="name">
+            
             <input
-              className="FirstName"
-              placeholder="First Name"
-              type="text"
-              name="FirstName"
-              onChange={handleChange}
-              value={formData.Fname}
-              required
-            />
-            <input
-              className="MiddleInitial"
-              placeholder="MI"
-              type="text"
-              name="MiddleInitial"
-              onChange={handleChange}
-              value={formData.MI}
-              required
-            />
-            <input
-              className="LastName"
-              placeholder="Last Name"
-              type="text"
-              name="LastName"
-              onChange={handleChange}
-              value={formData.Lname}
-              required
-            />
-            </div>
-          <label>
-            Age:
-            <input
+              placeholder="Age"
               type="text"
               name="Age"
               onChange={handleChange}
               value={formData.Age}
               required
             />
-          </label>
           <label>
-            Gender:
+            
             <input
+              placeholder="Gender"
               type="text"
               name="Gender"
               onChange={handleChange}
@@ -145,8 +116,8 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            Phone #:
             <input
+              placeholder="Phone #"
               type="text"
               name="Phone"
               onChange={handleChange}
@@ -154,8 +125,9 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            Address:
+            
             <input
+              placeholder="Address"
               type="text"
               name="Address"
               onChange={handleChange}
@@ -164,8 +136,9 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            Username:
+            
             <input
+            placeholder="Username"
               type="text"
               name="Username"
               onChange={handleChange}
@@ -174,8 +147,9 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            Password:
+            
             <input
+            placeholder="Password"
               type="password"
               name="Password"
               onChange={handleChange}
@@ -183,7 +157,7 @@ const AddNurse = () => {
               required
             />
           </label>
-          <button type="submit">Add Nurse</button>
+          <button onClick={handleSubmit}>Add Nurse</button>
         </form>
       </div>
     </div>

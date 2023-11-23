@@ -9,6 +9,7 @@ import Contact from "./tab/Contact/Contact";
 import Login from "./tab/Login/Login";
 import Signup from "./tab/Signup/Signup";
 import AddNurse from "./tab/Admin/AddNurse/AddNurse";
+import AddVaccine from "./tab/AddVaccine/AddVaccine";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin/addnurse" element={<AddNurse />} />
+          <Route path="/admin/addvaccine" element={<AddVaccine/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
