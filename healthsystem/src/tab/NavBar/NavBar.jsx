@@ -71,9 +71,15 @@ const NavBar = () => {
         </div>
 
         <div className="menu">
-          <Link className="link" to="/myschedule">
-            My Schedule
-          </Link>
+          {loggedIn && role === "admin" ? (
+            <Link className="link" to="/admin/assign">
+              Assign schedule
+            </Link>
+          ) : (
+            <Link className="link" to="/myschedule">
+              My schedule
+            </Link>
+          )}
           <Link className="link" to="/about">
             About Us
           </Link>
@@ -92,9 +98,11 @@ const NavBar = () => {
               </Link>
               <div id="topnav">
                 <div className="topnav-container">
-                  <Link className="drop-link" to="myschedule">
-                    My schedule
-                  </Link>
+                  {role !== "admin" && (
+                    <Link className="drop-link" to="myschedule">
+                      My schedule
+                    </Link>
+                  )}
                   {role === "patient" && (
                     <Link className="drop-link" to="/profile/patient">
                       Profile

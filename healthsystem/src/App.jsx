@@ -12,6 +12,7 @@ import AddNurse from "./tab/Admin/AddNurse/AddNurse";
 import Appointment from "./tab/Appointment/Appointment";
 import ProfilePatient from "./tab/ProfilePatient/ProfilePatient";
 import ProfileNurse from "./tab/ProfileNurse/ProfileNurse";
+import Assign from "./tab/Admin/Assign/Assign";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin/addnurse" element={<AddNurse />} />
+          <Route path="/admin/assign" element={<Assign />} />
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/profile/patient" element={<ProfilePatient />} />
           <Route path="/profile/nurse" element={<ProfileNurse />} />

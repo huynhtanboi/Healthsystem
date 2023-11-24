@@ -311,6 +311,20 @@ app.put("/profile/patient", async (req, res) => {
   );
 });
 
+app.get("/admin/search/:option", async (req, res) => {
+  console.log("searching...");
+  const option = req.params.option;
+  console.log(option);
+  const query = `SELECT * FROM ${option}`;
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log(result);
+    return res.send(result);
+  });
+});
+
 app.get("/logout", async (req, res) => {
   console.log("logging out...");
   req.session.destroy(function (err) {
