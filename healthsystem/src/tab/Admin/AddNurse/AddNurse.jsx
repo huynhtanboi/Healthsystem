@@ -1,4 +1,5 @@
 import "./AddNurse.css";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
 const AddNurse = () => {
@@ -18,37 +19,35 @@ const AddNurse = () => {
   const handleSubmit = async () => {
     console.log("clicked");
 
-    try {
-      const response = await fetch('http://localhost:3600/admin/addnurse', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+    const response = await fetch('http://localhost:3600/admin/addnurse', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+    
+    console.log("Response data:", data);
+
+    if (data) {
+      console.log("Redirecting...");
+      window.location.assign("/admin/addnurse");
+    } else {
+      alert("Something went wrong! Try again or call the IT supports.");
+      setFormData({
+        Fname: '',
+        MI: '',
+        Lname: '',
+        EmployeeID: '',
+        Age: '',
+        Gender: '',
+        Phone: '',
+        Address: '',
+        Username: '',
+        Password: '',
       });
-
-      const data = await response.json();
-
-      if (data) {
-        window.location.assign("/admin/addnurse");
-        console.log(data);
-      } else {
-        alert("Something went wrong! Try again or call the IT supports.");
-        setFormData({
-          Fname: '',
-          MI: '',
-          Lname: '',
-          EmployeeID: '',
-          Age: '',
-          Gender: '',
-          Phone: '',
-          Address: '',
-          Username: '',
-          Password: '',
-        });
-      }
-    } catch (error) {
-      console.error('Error:', error);
     }
   };
 
@@ -153,7 +152,9 @@ const AddNurse = () => {
               required
             />
           </label>
-          <button type="button" onClick={handleSubmit}>Add Nurse</button>
+          <button onClick={handleSubmit}>
+            Add Nurse
+            </button>
         </form>
       </div>
     </div>
