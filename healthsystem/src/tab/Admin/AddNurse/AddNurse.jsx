@@ -1,6 +1,6 @@
 import "./AddNurse.css";
-import { Link } from "react-router-dom";
 import { useState } from "react";
+
 const AddNurse = () => {
   const [formData, setFormData] = useState({
     Fname: '',
@@ -17,8 +17,9 @@ const AddNurse = () => {
 
   const handleSubmit = async () => {
     console.log("clicked");
-  
-      const response = await fetch('http://localhost:3600/addnurse', {
+
+    try {
+      const response = await fetch('http://localhost:3600/admin/addnurse', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,14 +27,12 @@ const AddNurse = () => {
         body: JSON.stringify(formData),
       });
 
-
       const data = await response.json();
 
       if (data) {
         window.location.assign("/admin/addnurse");
-      console.log(data);
-      } 
-      else {
+        console.log(data);
+      } else {
         alert("Something went wrong! Try again or call the IT supports.");
         setFormData({
           Fname: '',
@@ -48,11 +47,15 @@ const AddNurse = () => {
           Password: '',
         });
       }
-    };
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   return (
     <div className="add-nurse">
       <div className="add-nurse-content">
@@ -75,7 +78,6 @@ const AddNurse = () => {
               name="MI"
               onChange={handleChange}
               value={formData.MI}
-              // required
             />
             <input
               className="last-name"
@@ -87,25 +89,23 @@ const AddNurse = () => {
               required
             />
           </div>
-            <input
+          <input
             placeholder="Employee ID"
-              type="text"
-              name="EmployeeID"
-              onChange={handleChange}
-              value={formData.EmployeeID}
-              required
-            />
-            
-            <input
-              placeholder="Age"
-              type="text"
-              name="Age"
-              onChange={handleChange}
-              value={formData.Age}
-              required
-            />
+            type="text"
+            name="EmployeeID"
+            onChange={handleChange}
+            value={formData.EmployeeID}
+            required
+          />
+          <input
+            placeholder="Age"
+            type="text"
+            name="Age"
+            onChange={handleChange}
+            value={formData.Age}
+            required
+          />
           <label>
-            
             <input
               placeholder="Gender"
               type="text"
@@ -125,20 +125,17 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            
             <input
               placeholder="Address"
               type="text"
               name="Address"
               onChange={handleChange}
               value={formData.Address}
-              
             />
           </label>
           <label>
-            
             <input
-            placeholder="Username"
+              placeholder="Username"
               type="text"
               name="Username"
               onChange={handleChange}
@@ -147,9 +144,8 @@ const AddNurse = () => {
             />
           </label>
           <label>
-            
             <input
-            placeholder="Password"
+              placeholder="Password"
               type="password"
               name="Password"
               onChange={handleChange}
@@ -157,7 +153,7 @@ const AddNurse = () => {
               required
             />
           </label>
-          <button onClick={handleSubmit}>Add Nurse</button>
+          <button type="button" onClick={handleSubmit}>Add Nurse</button>
         </form>
       </div>
     </div>

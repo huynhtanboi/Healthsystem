@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "thanhtai",
+  password: "boihuynh",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -54,7 +54,11 @@ function isAuthenticated(req, res, next) {
 app.get("/", async (req, res) => {
   if (req.session.user) {
     console.log("session user: ", req.session.user);
-    res.send({ loggedIn: true, user: req.session.user });
+    res.send({
+      loggedIn: true,
+      user: req.session.user,
+      role: req.session.role,
+    });
   } else {
     res.send({ loggedIn: false });
   }
@@ -122,10 +126,69 @@ app.post("/signup", async (req, res) => {
   );
 });
 
+app.post("/admin/addnurse", async (req, res) => {
+  console.log("adding nurse...");
+  const {
+    Fname,
+    MI,
+    Lname,
+    EmployeeID,
+    Age,
+    Gender,
+    Phone,
+    Address,
+    Username,
+    Password
+
+  } = req.body;
+  console.log(
+    Fname,
+    MI,
+    Lname,
+    EmployeeID,
+    Age,
+    Gender,
+    Phone,
+    Address,
+    Username,
+    Password
+  );
+  const query =
+    "INSERT INTO nurse (Fname, MI, Lname, `Employee ID`, Age, Gender, `Phone #`, Address, Username, Password) VALUES (?,?,?,?,?,?,?,?,?,?)";
+  db.query(
+    query,
+    [
+      Fname,
+      MI,
+      Lname,
+      EmployeeID,
+      Age,
+      Gender,
+      Phone,
+      Address,
+      Username,
+      Password
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.send({ err: err });
+      }
+      console.log("true");
+      res.redirect("/admin/addnurse");
+
+    }
+  );
+});
+
 app.post("/login", async (req, res) => {
   console.log("authenticating...");
-  const { username, password } = req.body;
-  const query = "SELECT * FROM patient WHERE username = ? AND password = ?";
+  const { username, password, role } = req.body;
+  console.log("info: ", username, password, role);
+  let roleQuery = `patient`;
+  if (role === "admin") roleQuery = `admin`;
+  else if (role === "nurse") roleQuery = `nurse`;
+  const query = `SELECT * FROM ${roleQuery} WHERE username = ? AND password = ?`;
   db.query(query, [username, password], (err, result) => {
     if (err) {
       return res.send({ err: err });
@@ -138,19 +201,75 @@ app.post("/login", async (req, res) => {
 
         // store user information in session, typically a user id
         req.session.user = username;
+        req.session.role = role;
 
         // save the session before redirection to ensure page
         // load does not happen before session is saved
         req.session.save(function (err) {
           console.log("saving session...");
           if (err) return next(err);
-          return res.send({ loggedIn: true, username: username });
+          return res.send({ loggedIn: true, username: username, role: role });
         });
       });
     } else {
       console.log(false);
       return res.send({ loggedIn: false });
     }
+  });
+});
+
+app.post("/appointment", async (req, res) => {
+  console.log("making appoinment...");
+  const { time } = req.body;
+  console.log(time);
+  // check if time is available
+  const query1 = `SELECT * FROM timeslot WHERE dateinfo = ?`;
+  db.query(query1, [time], (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    if (result?.length > 0) {
+      console.log(result[0]);
+      const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[0];
+      if (numOfPeople < numOfNurse * 10 && numOfPeople < 100) {
+        console.log(true);
+        const query2 = `UPDATE timeslot SET numOfPeople = ? WHERE idtimeslot = ?`;
+        db.query(query2, [numOfPeople + 1, idtimeslot], (err, result) => {
+          if (err) {
+            return res.send({ err: err });
+          }
+          console.log("true");
+          return res.send(true);
+        });
+      } else {
+        console.log("the time slot is full");
+        return res.send(false);
+      }
+    } else {
+      console.log("no time slot");
+    }
+  });
+});
+
+app.get("/appointment/:date", async (req, res) => {
+  const date = req.params.date;
+  const query = `SELECT * FROM timeslot WHERE dateinfo LIKE '${date}%'`;
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    // process availabilities
+    const availabilities = [];
+    if (!result.length) return res.send([]);
+    for (let i = 0; i < result.length; i++) {
+      const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[i];
+      const time = dateinfo.split(" ")[1];
+      if (numOfPeople >= numOfNurse * 10 && numOfPeople >= 100) {
+        availabilities.push(time);
+      }
+    }
+
+    return res.send(availabilities);
   });
 });
 
