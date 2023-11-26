@@ -126,6 +126,64 @@ app.post("/signup", async (req, res) => {
   );
 });
 
+app.post("/admin/addvaccine", async (req, res) => {
+  console.log("Adding vaccine...");
+  const {
+    name,
+    companyName,
+    doseRequired,
+    availableDose,
+    description,
+  } = req.body;
+
+  console.log(
+    name,
+    companyName,
+    doseRequired,
+    availableDose,
+    description
+  );
+
+  // Check if the vaccine with the same idVaccine already exists
+  const checkQuery = "SELECT * FROM Vaccine WHERE name = ?";
+  db.query(checkQuery, [name], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.log(checkErr);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    if (checkResult.length > 0) {
+      // If the vaccine already exists, update the availableDose
+      const updateQuery =
+        "UPDATE Vaccine SET availableDose = availableDose + ? WHERE name = ?";
+      db.query(updateQuery, [availableDose, name], (updateErr) => {
+        if (updateErr) {
+          console.log(updateErr);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        console.log("Vaccine added successfully");
+        return res.status(200).json({ success: true });
+      });
+    } else {
+      // If the vaccine does not exist, insert a new entry
+      const insertQuery =
+        "INSERT INTO Vaccine ( name, CompanyName, numDoseRequire, availableDose, TextualDes) VALUES (?,?,?,?,?)";
+      db.query(
+        insertQuery,
+        [ name, companyName, doseRequired, availableDose, description],
+        (insertErr) => {
+          if (insertErr) {
+            console.log(insertErr);
+            return res.status(500).json({ error: "Internal Server Error" });
+          }
+          console.log("Vaccine added successfully");
+          return res.status(200).json({ success: true });
+        }
+      );
+    }
+  });
+});
+
 app.post("/admin/addnurse", async (req, res) => {
   console.log("adding nurse...");
   const {
