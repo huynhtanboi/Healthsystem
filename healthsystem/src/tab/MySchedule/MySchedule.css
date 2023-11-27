@@ -1,37 +1,82 @@
-.schedule-board,
-.vaccine-board {
-  background-color: #fff;
+.myschedule {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #046f8b;
+  font-weight: 700;
+  margin: 7rem 12rem;
+}
+
+.myschedule h1 {
+  margin: 0rem;
+}
+
+.myschedule .title {
+  padding: 0rem;
+  margin-bottom: 2rem;
+  color: #046f8b;
+}
+
+.myschedule .myschedule-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.myschedule .appointment-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4rem;
+  margin-top: 3rem;
+}
+
+.myschedule .item {
+  color: #f0f0f0;
+  background-color: rgba(0, 128, 0, 0.587);
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin: 20px;
-  text-align: center;
+  box-sizing: border-box;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 25rem;
+  position: relative;
 }
 
-.time-slot {
-  background-color: rgb(160, 219, 198);
-  color: #fff;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.time-slot.selected {
-  background-color: rgb(88, 175, 147);
+.myschedule .item:hover {
+  transform: translateY(-0.5rem);
+  transition: all 0.3s ease-in-out;
 }
 
-.vaccine-btn {
-  background-color: #2196f3;
-  color: #fff;
-  padding: 10px;
-  margin: 10px;
-  border: none;
-  border-radius: 5px;
+.myschedule .icon {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  color: #046f8b;
   cursor: pointer;
 }
-.vaccine-btn.selected {
-  background-color: #0b7dda;
+
+.myschedule .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5rem;
 }
-.vaccine-btn:hover {
-  background-color: #0b7dda;
+
+.myschedule .empty-text {
+  color: #96969662;
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0rem;
+}
+
+.myschedule .item.past {
+  background-color: rgba(143, 143, 143, 0.598);
+}
+
+.myschedule .item.past .icon {
+  display: none;
 }

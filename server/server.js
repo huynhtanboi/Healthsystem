@@ -2,7 +2,6 @@ import "./config/dotenv.js";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { pool } from "./config/database.js";
 import mysql from "mysql";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -68,7 +67,10 @@ function isPatient(req, res, next) {
 // middleware to test if nurse
 function isNurse(req, res, next) {
   if (req.session.role === "nurse") next();
-  else next("route");
+  else
+    res
+      .status(403)
+      .send("Forbidden: You don't have the required permissions as a patient.");
 }
 
 app.get("/", async (req, res) => {
@@ -290,6 +292,137 @@ app.post("/login", async (req, res) => {
       return res.send({ loggedIn: false });
     }
   });
+});
+
+app.get("/myappointments", isPatient, async (req, res) => {
+  console.log("getting appointments...");
+  const id = req.session.iduser;
+
+  try {
+    // fetch my appointment
+    console.log("fetching appointments...");
+    const query = `SELECT * FROM appointment WHERE patient_id = ?`;
+    const result = await queryAsync(query, [id]);
+    console.log(result);
+
+    // fetch timeslot
+    console.log("fetching timeslot...");
+    for (let i = 0; i < result.length; i++) {
+      const { assignedto_id } = result[i];
+      // get timeslot first
+      console.log("fetching timeslotid...");
+      const query1 = `SELECT timeslot_id FROM assignedto WHERE idassignedTo = ?`;
+      const result1 = await queryAsync(query1, [assignedto_id]);
+      // console.log(result1);
+      console.log("finished fetching timeslotid...");
+
+      // get dateinfo
+      console.log("fetching dateinfo...");
+      console.log(result1[0].timeslot_id);
+      const query2 = `SELECT dateinfo FROM timeslot WHERE idtimeslot = ?`;
+      const result2 = await queryAsync(query2, [result1[0].timeslot_id]);
+      console.log(result2);
+      result[i].dateinfo = result2[0].dateinfo;
+    }
+
+    console.log("finished fetching appointments...");
+    const sortedResult = result.sort((a, b) => {
+      const dateA = new Date(a.dateinfo);
+      const dateB = new Date(b.dateinfo);
+
+      // Sorting in descending order
+      return dateB - dateA;
+    });
+    console.log(sortedResult);
+    return res.send(sortedResult);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
+app.delete("/myappointments", isPatient, async (req, res) => {
+  console.log("deleting appointment...");
+  const {
+    idappointment,
+    vaccine_id,
+    patient_id,
+    assignedto_id,
+    dose,
+    dateinfo,
+  } = req.body;
+
+  console.log(
+    idappointment,
+    vaccine_id,
+    patient_id,
+    assignedto_id,
+    dose,
+    dateinfo
+  );
+
+  try {
+    // update assignedto
+    console.log("updating assignedto...");
+    const query1 = `UPDATE assignedto SET numOfPatients = numOfPatients - 1 WHERE idassignedTo = ?`;
+    await queryAsync(query1, [assignedto_id]);
+    console.log("finished updating assignedto...");
+
+    // update timeslot
+    console.log("updating timeslot...");
+    const query2 = `UPDATE timeslot SET numOfPeople = numOfPeople - 1 WHERE dateinfo = ?`;
+    await queryAsync(query2, [dateinfo]);
+    console.log("finished updating timeslot...");
+
+    // update vaccine
+    console.log("updating vaccine...");
+    const query3 = `UPDATE vaccine SET availableDose = availableDose + 1, numDoseOnHold = numDoseOnHold - 1 WHERE idVaccine = ?`;
+    await queryAsync(query3, [vaccine_id]);
+    console.log("finished updating vaccine...");
+
+    // delete appointment
+    console.log("deleting appointment...");
+    const query4 = `DELETE FROM appointment WHERE idappointment = ?`;
+    await queryAsync(query4, [idappointment]);
+    console.log("finished deleting appointment...");
+
+    // update patient
+    console.log("updating patient...");
+    let query5;
+    if (dose > 1) {
+      query5 = `UPDATE patient SET dose = dose - 1 WHERE idpatient = ?`;
+    } else {
+      query5 = `UPDATE patient SET dose = dose - 1, vaccine_id = NULL WHERE idpatient = ?`;
+    }
+    await queryAsync(query5, [patient_id]);
+    console.log("finished updating patient...");
+
+    // update appointment
+    console.log("updating appointment...");
+    console.log("get all the appointments of the patient...");
+    const query6 = `SELECT * FROM appointment WHERE patient_id = ?`;
+    const result = await queryAsync(query6, [patient_id]);
+    console.log(result);
+    console.log("finished getting all the appointments of the patient...");
+    console.log(
+      "updating all the appointments whose dose is greater than the deleted dose"
+    );
+    const deletedDose = dose;
+    for (let i = 0; i < result.length; i++) {
+      const { dose, idappointment } = result[i];
+      if (dose > deletedDose) {
+        const query7 = `UPDATE appointment SET dose = dose - 1 WHERE idappointment = ?`;
+        await queryAsync(query7, [idappointment]);
+      }
+    }
+    console.log(
+      "finished updating all the appointments whose dose is greater than the deleted dose"
+    );
+    return res.send(true);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
 });
 
 app.post("/appointment", isPatient, async (req, res) => {
@@ -556,26 +689,91 @@ app.get("/vaccine", async (req, res) => {
   });
 });
 
-app.get("/nurse/assign/:date", async (req, res) => {
+app.get("/nurse/assign/:date", isNurse, async (req, res) => {
   const date = req.params.date;
-  const query = `SELECT * FROM timeslot WHERE dateinfo LIKE '${date}%'`;
-  db.query(query, (err, result) => {
-    if (err) {
-      return res.send({ err: err });
-    }
+
+  try {
+    console.log("getting availabilities...");
+    const query = `SELECT * FROM timeslot WHERE dateinfo LIKE '${date}%'`;
+    const result = await queryAsync(query, [date]);
+    console.log(result);
+    console.log("finished getting availabilities...");
+
     // process availabilities
     const availabilities = [];
     if (!result.length) return res.send([]);
+    console.log(result);
+
     for (let i = 0; i < result.length; i++) {
       const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[i];
       const time = dateinfo.split(" ")[1];
-      if (numOfPeople < numOfNurse * 10 && numOfPeople < 100) {
+      // check if the nurse is assigned to the timeslot
+      const query1 = `SELECT * FROM assignedto WHERE nurse_id = ? AND timeslot_id = ?`;
+      const result1 = await queryAsync(query1, [
+        req.session.iduser,
+        idtimeslot,
+      ]);
+      if (result1?.length > 0) {
+        availabilities.push(time);
+        continue;
+      }
+      if (numOfPeople >= 100) {
         availabilities.push(time);
       }
     }
-
     return res.send(availabilities);
-  });
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
+app.post("/nurse/assign", isNurse, async (req, res) => {
+  console.log("assigning nurse...");
+  const { time } = req.body;
+  console.log(time);
+
+  try {
+    let timeslotId = null;
+    // Check if timeslot exists
+    console.log("checking timeslot...");
+    const query = `SELECT * FROM timeslot WHERE dateinfo = ?`;
+    const result = await queryAsync(query, [time]);
+    console.log(result);
+    console.log("finished checking timeslot...");
+
+    if (result?.length > 0) {
+      // update the timeslot
+      console.log("updating timeslot...");
+      const query1 = `UPDATE timeslot SET numOfNurse = numOfNurse + 1 WHERE dateinfo = ?`;
+      await queryAsync(query1, [time]);
+      console.log("finished updating timeslot...");
+    } else {
+      // create new timeslot
+      console.log("creating new timeslot...");
+      const query2 = `INSERT INTO timeslot (dateinfo, numOfPeople, numOfNurse) VALUES (?, ?, ?)`;
+      const result1 = await queryAsync(query2, [time, 0, 1]);
+      console.log(result1);
+      timeslotId = result1.insertId;
+
+      console.log("finished creating new timeslot...");
+    }
+
+    // create a new assignment
+    console.log("creating new assignment...");
+    const query3 = `INSERT INTO assignedto (nurse_id, timeslot_id, numOfPatients) VALUES (?, ?, ?)`;
+    const result2 = await queryAsync(query3, [
+      req.session.iduser,
+      timeslotId,
+      0,
+    ]);
+    console.log(result2);
+    console.log("finished creating new assignment...");
+    return res.send(true);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
 });
 
 app.get("/logout", async (req, res) => {

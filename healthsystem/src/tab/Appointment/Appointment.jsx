@@ -33,7 +33,7 @@ const Appointment = () => {
       const data = await response.json();
       console.log(data);
       if (data.length > 0) {
-        const temp = { ...timeSlots };
+        const temp = { ...timeId };
         data.forEach((key) => {
           temp[key] = true;
         });

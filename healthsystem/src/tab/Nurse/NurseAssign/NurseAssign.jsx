@@ -2,13 +2,13 @@ import "./NurseAssign.css";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { timeId } from "../../../utils/utils";
+import { timeIdTrueDefault } from "../../../utils/utils";
 
 const NurseAssign = () => {
   const [value, onChange] = useState(new Date());
   const [formatedDate, setFormatedDate] = useState("");
   const [time, setTime] = useState("");
-  const [timeSlots, setTimeSlots] = useState(timeId);
+  const [timeSlots, setTimeSlots] = useState(timeIdTrueDefault);
 
   const formatDateFunc = (date) => {
     const year = date.getFullYear();
@@ -32,22 +32,30 @@ const NurseAssign = () => {
           credentials: "include",
         }
       );
+      if (response.status === 403) {
+        alert("Requesting an nurseassign is only available for nurse!");
+        window.location.assign("/login");
+      }
       const data = await response.json();
       console.log(data);
       if (data.length > 0) {
-        const temp = { ...timeSlots };
+        const temp = { ...timeIdTrueDefault };
         data.forEach((key) => {
-          temp[key] = true;
+          temp[key] = false;
         });
         setTimeSlots(temp);
       } else {
-        setTimeSlots(timeId);
+        setTimeSlots(timeIdTrueDefault);
       }
     };
     checkTime();
   }, [value, formatedDate]);
 
   const handleRequest = async () => {
+    if (!time) {
+      alert("Please choose a time slot!");
+      return;
+    }
     const bodyContent = { time: formatedDate + " " + time };
     console.log(bodyContent);
     const response = await fetch("http://localhost:3600/nurse/assign", {
@@ -66,8 +74,8 @@ const NurseAssign = () => {
     const data = await response.json();
     console.log("request: ", data);
     if (data) {
-      alert("Successfully requested an nurseassign!");
-      window.location.assign("/");
+      alert("Successfully picked a time slot!");
+      window.location.reload();
     } else {
       alert(
         "Time slot is full or not available right now! Please choose another time slot"
@@ -79,7 +87,7 @@ const NurseAssign = () => {
   return (
     <div className="nurseassign">
       <div className="nurseassign-content">
-        <h1 className="title">nurseassign</h1>
+        <h1 className="title">Choose a time slot</h1>
         <div className="nurseassign-time">
           <Calendar
             onChange={onChange}
