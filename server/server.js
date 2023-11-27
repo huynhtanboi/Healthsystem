@@ -68,7 +68,10 @@ function isPatient(req, res, next) {
 // middleware to test if nurse
 function isNurse(req, res, next) {
   if (req.session.role === "nurse") next();
-  else next("route");
+  else
+    res
+      .status(403)
+      .send("Forbidden: You don't have the required permissions as a patient.");
 }
 
 app.get("/", async (req, res) => {
@@ -536,7 +539,7 @@ app.delete("/admin/delete/:option/:id", isAdmin, async (req, res) => {
   });
 });
 
-app.get("/nurse/search/schedule", async (req, res) => {
+app.get("/nurse/search/schedule", isNurse, async (req, res) => {
   console.log("getting nurse schedule...");
   const idnurse = req.session.iduser;
 
@@ -547,7 +550,7 @@ app.get("/nurse/search/schedule", async (req, res) => {
     SELECT t.dateinfo, a.idassignedTo
     FROM timeslot t
     INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
-    WHERE a.nurse_id = ? ORDER BY t.dateinfo DESC`;
+    WHERE a.nurse_id = ? AND a.onCancel = 0 ORDER BY t.dateinfo DESC`;
     const result = await queryAsync(query, [idnurse]);
     console.log(result);
     console.log("getting nurse schedule done.");
@@ -559,23 +562,24 @@ app.get("/nurse/search/schedule", async (req, res) => {
   }
 });
 
-app.delete("/nurse/remove/schedule/:id", async (req, res) => {
+app.delete("/nurse/remove/schedule/:id", isNurse, async (req, res) => {
   console.log("removing nurse schedule...");
   const scheduleId = req.params.id;
   console.log("scheduleId: ", scheduleId);
   try {
-    // delete schedule
-    const query = "DELETE FROM assignedTo WHERE id = ?";
+    // update assignedTo onCancel
+    console.log("updating assignedTo...");
+    const query1 = `UPDATE assignedTo SET onCancel = 1 WHERE idassignedTo = ?`;
+    await queryAsync(query1, [scheduleId]);
+    console.log("updating assignedTo done.");
 
-    db.query(query, [scheduleId], (err, result) => {
-      if (err) {
-        console.error("Error deleting schedule:", err);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
+    // add cancelled schedule
+    console.log("adding cancelled schedule...");
+    const query2 = `INSERT INTO cancel (assignedTo_id) VALUES (?)`;
+    await queryAsync(query2, [scheduleId]);
+    console.log("adding cancelled schedule done.");
 
-      console.log("Schedule deleted successfully.");
-      return res.json({ success: true });
-    });
+    return res.send(true);
   } catch (err) {
     console.error("Error:", err);
     return res.send({ err: err });
