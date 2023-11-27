@@ -11,6 +11,7 @@ const Assign = () => {
   const [searchInfoList, setSearchInfoList] = useState([]);
   const [searchInfo, setSearchInfo] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [schedules, setSchedules] = useState([]);
 
   useEffect(() => {
     console.log(option);
@@ -79,6 +80,33 @@ const Assign = () => {
     }
   };
 
+  const fetchNurseSchedules = async (personId) => {
+    let url = `http://localhost:3600/admin/patient/schedule/${personId}`;
+    if (option == "nurse") {
+      url = `http://localhost:3600/admin/nurse/schedule/${personId}`;
+    }
+    const fetchSchedule = async () => {
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.status === 403) {
+          throw new Error("You are not authorized to view this page.");
+        }
+
+        const data = await response.json();
+        console.log("schedules ", option, " ", data);
+        setSchedules(data);
+      } catch (error) {
+        console.error("Error fetching nurse schedules:", error.message);
+      }
+    };
+
+    fetchSchedule();
+  };
+
   return (
     <div className="assign-box">
       <div className="assign">
@@ -86,7 +114,7 @@ const Assign = () => {
           <div className="search-container">
             <input
               type="text"
-              placeholder="Search for patient by id"
+              placeholder={`Search for ${option} by id`}
               onChange={handleSearch}
             />
             <select id="example" name="example" onChange={handleOptionChange}>
@@ -98,7 +126,9 @@ const Assign = () => {
             {searchInfoList.map((info, index) => (
               <div className="info" key={index}>
                 <div className="info-basic">
-                  <div>{`${info?.Fname} ${info?.MI} ${info?.Lname}`}</div>
+                  <div>{`${info?.Fname || " "} ${info?.MI || " "} ${
+                    info?.Lname || " "
+                  }`}</div>
                   <div>{info?.SSN || info?.["Employee ID"]}</div>
                 </div>
                 <div className="icons">
@@ -107,6 +137,7 @@ const Assign = () => {
                     onClick={() => {
                       setSelectedPerson(info);
                       setIsModalOpen(true);
+                      fetchNurseSchedules(info?.idpatient || info?.idnurse);
                     }}
                   />
                   <AiOutlineDelete
@@ -133,6 +164,15 @@ const Assign = () => {
                 setIsModalOpen(false);
               }}
             />
+            <div className="schedule-container">
+              {schedules.map((schedule, index) => (
+                <div className="schedule-item" key={index}>
+                  <div className="info-basic">
+                    <div>Time: {schedule?.dateinfo}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

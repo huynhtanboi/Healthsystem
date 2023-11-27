@@ -692,6 +692,52 @@ app.get("/nurse/search/schedule", isNurse, async (req, res) => {
   }
 });
 
+// with id
+app.get("/admin/nurse/schedule/:id", isAdmin, async (req, res) => {
+  console.log("getting nurse schedule...");
+  const idnurse = req.params.id;
+
+  try {
+    // getting nurse schedule
+    console.log("getting nurse schedule...");
+    const query = `
+    SELECT t.dateinfo, a.idassignedTo
+    FROM timeslot t
+    INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
+    WHERE a.nurse_id = ? AND a.onCancel = 0 ORDER BY t.dateinfo DESC`;
+    const result = await queryAsync(query, [idnurse]);
+    console.log(result);
+    console.log("getting nurse schedule done.");
+
+    return res.send(result);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
+app.get("/admin/patient/schedule/:id", isAdmin, async (req, res) => {
+  console.log("getting patient schedule...");
+  const idpatient = req.params.id;
+  try {
+    // getting patient schedule
+    console.log("getting patient schedule...");
+    const query = `
+    SELECT t.dateinfo
+    FROM timeslot t
+    INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
+    INNER JOIN appointment p ON a.idassignedTo = p.assignedto_id
+    WHERE p.patient_id = ? ORDER BY t.dateinfo DESC`;
+    const result = await queryAsync(query, [idpatient]);
+    console.log(result);
+    console.log("getting patient schedule done.");
+    return res.send(result);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
 app.delete("/nurse/remove/schedule/:id", isNurse, async (req, res) => {
   console.log("removing nurse schedule...");
   const scheduleId = req.params.id;
