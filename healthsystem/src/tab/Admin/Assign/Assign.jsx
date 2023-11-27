@@ -22,6 +22,9 @@ const Assign = () => {
       );
       const data = await response.json();
       console.log(data);
+      if (!data) {
+        window.location.assign("/");
+      }
       setListInfo(data);
       setSearchInfoList(data);
     };
@@ -33,14 +36,45 @@ const Assign = () => {
     if (e.target.value === "") {
       setSearchInfoList(listInfo);
     } else {
-      setSearchInfoList(
-        listInfo.filter((element) => element.includes(e.target.value))
-      );
+      if (option === "patient") {
+        setSearchInfoList(
+          listInfo.filter((element) => element?.SSN.startsWith(e.target.value))
+        );
+      } else {
+        setSearchInfoList(
+          listInfo.filter((element) =>
+            String(element?.["Employee ID"]).startsWith(e.target.value)
+          )
+        );
+      }
     }
   };
 
   const handleOptionChange = (e) => {
     setOption(e.target.value);
+  };
+
+  const handleDelete = async (deletedId) => {
+    const userConfirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+    if (userConfirmed) {
+      const response = await fetch(
+        `http://localhost:3600/admin/delete/${option}/${deletedId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      if (data) {
+        alert("User deleted successfully!");
+        window.location.reload();
+      } else {
+        alert("Something went wrong! Please try again.");
+      }
+    }
   };
 
   return (
@@ -65,8 +99,12 @@ const Assign = () => {
                 <div>{info?.SSN || info?.["Employee ID"]}</div>
               </div>
               <div className="icons">
-                <FaRegCalendarAlt />
-                <AiOutlineDelete size={17} />
+                <FaRegCalendarAlt className="icon-item" />
+                <AiOutlineDelete
+                  size={17}
+                  className="icon-item"
+                  onClick={() => handleDelete(info?.idpatient || info?.idnurse)}
+                />
               </div>
             </div>
           ))}

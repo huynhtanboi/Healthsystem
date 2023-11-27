@@ -58,6 +58,10 @@
 .appointment .time {
   text-align: center;
   color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .appointment .time-title {
@@ -107,6 +111,17 @@
 }
 
 .appointment .disabled {
-  background-color: #f4dada;
+  background-color: #e6e5e5;
   color: #ff0000;
+}
+
+.appointment select {
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  padding: 0.25rem 0.25rem;
+  font-size: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.48);
+  margin-top: 1rem;
 }

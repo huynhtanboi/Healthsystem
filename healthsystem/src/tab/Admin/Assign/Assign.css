@@ -45,7 +45,7 @@
   width: 50rem;
 }
 
-.assign .info-basic:hover {
+.assign .info:hover {
   transform: translateY(-0.5rem);
   transition: all 0.3s ease-in-out;
 }
@@ -60,4 +60,8 @@
   top: 1rem;
   right: 2rem;
   color: rgb(50, 93, 116);
+}
+
+.assign .icon-item {
+  cursor: pointer;
 }
