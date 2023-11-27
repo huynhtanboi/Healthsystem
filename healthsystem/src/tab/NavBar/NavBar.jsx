@@ -78,7 +78,7 @@ const NavBar = () => {
         <div className="menu">
           {loggedIn && role === "admin" && (
             <Link className="link" to="/admin/assign">
-              Assign schedule
+              View schedules
             </Link>
           )}
           <Link className="link" to="/about">
