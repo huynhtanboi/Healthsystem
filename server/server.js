@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "boihuynh",
+  password: "thanhtai",
   host: "localhost",
   port: 3306,
   database: "health",

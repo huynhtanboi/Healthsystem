@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "reset": "cd config && node --require dotenv/config reset.js"
   },
   "type": "module",

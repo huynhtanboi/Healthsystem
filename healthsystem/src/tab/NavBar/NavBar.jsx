@@ -71,7 +71,7 @@ const NavBar = () => {
         </div>
 
         <div className="menu">
-          {loggedIn && role === "admin"&& (
+          {loggedIn && role === "admin" && (
             <Link className="link" to="/admin/assign">
               Assign schedule
             </Link>
@@ -94,23 +94,19 @@ const NavBar = () => {
               </Link>
               <div id="topnav">
                 <div className="topnav-container">
-                  
                   {role === "patient" && (
                     <Link className="drop-link" to="/profile/patient">
                       Profile
                     </Link>
                   )}
-                  {role === "nurse" && (
-                    <div>
-                    <Link className="drop-link" to="/profile/nurse">
+                  {role === "nurse" && [
+                    <Link className="drop-link" key={0} to="/profile/nurse">
                       Profile
-                    </Link>
-                    
-                    <Link className="drop-link" to="/nurse/schedule">
+                    </Link>,
+                    <Link className="drop-link" key={1} to="/nurse/schedule">
                       My schedule
-                    </Link>
-                  </div>
-                  )}
+                    </Link>,
+                  ]}
                   {role === "admin" && (
                     <Link className="drop-link" to="/admin/addnurse">
                       Add Nurse
