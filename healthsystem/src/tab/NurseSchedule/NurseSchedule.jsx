@@ -9,16 +9,22 @@ const NurseSchedule = () => {
   useEffect(() => {
     const fetchNurseSchedules = async () => {
       try {
-        const response = await fetch("http://localhost:3600/search/nurse/schedule/:id", {
-          method: "GET",
-          credentials: "include",
-        });
+        const response = await fetch(
+          "http://localhost:3600/nurse/search/schedule",
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch nurse schedules. Status: ${response.status}`);
+          throw new Error(
+            `Failed to fetch nurse schedules. Status: ${response.status}`
+          );
         }
 
         const data = await response.json();
+        console.log("Nurse schedules:", data);
         setNurseSchedules(data);
       } catch (error) {
         console.error("Error fetching nurse schedules:", error.message);
@@ -35,16 +41,21 @@ const NurseSchedule = () => {
 
     if (userConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3600/delete-schedule/${scheduleId}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
+        const response = await fetch(
+          `http://localhost:3600/nurse/remove/schedule/${scheduleId}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+          }
+        );
 
         const data = await response.json();
 
         if (data) {
           alert("Schedule deleted successfully!");
-          setNurseSchedules(nurseSchedules.filter((schedule) => schedule.id !== scheduleId));
+          setNurseSchedules(
+            nurseSchedules.filter((schedule) => schedule.id !== scheduleId)
+          );
         } else {
           alert("Something went wrong! Please try again.");
         }
@@ -61,15 +72,14 @@ const NurseSchedule = () => {
         {nurseSchedules.map((schedule, index) => (
           <div className="schedule-item" key={index}>
             <div className="info-basic">
-              <div>{`Nurse Name: ${schedule.nurseName}`}</div>
-              <div>{`Nurse ID: ${schedule.nurseId}`}</div>
+              <div>Time: {schedule?.dateinfo}</div>
             </div>
             <div className="icons">
               <FaRegCalendarAlt className="icon-item" />
               <AiOutlineDelete
                 size={17}
                 className="icon-item"
-                onClick={() => handleDelete(schedule.id)}
+                onClick={() => handleDelete(schedule?.idassignedTo)}
               />
             </div>
           </div>

@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "boihuynh",
+  password: "thanhtai",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -536,40 +536,50 @@ app.delete("/admin/delete/:option/:id", isAdmin, async (req, res) => {
   });
 });
 
-app.get("/nurse/search-schedule/:id", async (req, res) => {
-  const { idnurse } = req.session.iduser;
+app.get("/nurse/search/schedule", async (req, res) => {
+  console.log("getting nurse schedule...");
+  const idnurse = req.session.iduser;
 
-  const query = `
-    SELECT t.dateinfo
+  try {
+    // getting nurse schedule
+    console.log("getting nurse schedule...");
+    const query = `
+    SELECT t.dateinfo, a.idassignedTo
     FROM timeslot t
-    INNER JOIN assignedTo a ON t.timeslotID = a.timeslotID
-    WHERE a.nurse_id = ${idnurse};
-  `;
-
-  db.query(query, (err, result) => {
-    if (err) {
-      return res.send({ err: err });
-    }
+    INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
+    WHERE a.nurse_id = ? ORDER BY t.dateinfo DESC`;
+    const result = await queryAsync(query, [idnurse]);
     console.log(result);
+    console.log("getting nurse schedule done.");
+
     return res.send(result);
-  });
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
 });
 
-
-app.delete("/nurse/remove-schedule/:id", async (req, res) => {
+app.delete("/nurse/remove/schedule/:id", async (req, res) => {
+  console.log("removing nurse schedule...");
   const scheduleId = req.params.id;
+  console.log("scheduleId: ", scheduleId);
+  try {
+    // delete schedule
+    const query = "DELETE FROM assignedTo WHERE id = ?";
 
-  const query = "DELETE FROM assignedTo WHERE id = ?";
-  
-  db.query(query, [scheduleId], (err, result) => {
-    if (err) {
-      console.error("Error deleting schedule:", err);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
+    db.query(query, [scheduleId], (err, result) => {
+      if (err) {
+        console.error("Error deleting schedule:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
 
-    console.log("Schedule deleted successfully.");
-    return res.json({ success: true });
-  });
+      console.log("Schedule deleted successfully.");
+      return res.json({ success: true });
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
 });
 
 // only getting the available vaccine
@@ -591,7 +601,6 @@ app.get("/vaccine", async (req, res) => {
     return res.send(result);
   });
 });
-
 
 app.get("/logout", async (req, res) => {
   console.log("logging out...");
