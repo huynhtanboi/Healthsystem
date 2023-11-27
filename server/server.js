@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "thanhtai",
+  password: "boihuynh",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -536,6 +536,42 @@ app.delete("/admin/delete/:option/:id", isAdmin, async (req, res) => {
   });
 });
 
+app.get("/nurse/search-schedule/:id", async (req, res) => {
+  const { idnurse } = req.session.iduser;
+
+  const query = `
+    SELECT t.dateinfo
+    FROM timeslot t
+    INNER JOIN assignedTo a ON t.timeslotID = a.timeslotID
+    WHERE a.nurse_id = ${idnurse};
+  `;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    console.log(result);
+    return res.send(result);
+  });
+});
+
+
+app.delete("/nurse/remove-schedule/:id", async (req, res) => {
+  const scheduleId = req.params.id;
+
+  const query = "DELETE FROM assignedTo WHERE id = ?";
+  
+  db.query(query, [scheduleId], (err, result) => {
+    if (err) {
+      console.error("Error deleting schedule:", err);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    console.log("Schedule deleted successfully.");
+    return res.json({ success: true });
+  });
+});
+
 // only getting the available vaccine
 app.get("/vaccine", async (req, res) => {
   console.log("getting vaccine...");
@@ -555,6 +591,7 @@ app.get("/vaccine", async (req, res) => {
     return res.send(result);
   });
 });
+
 
 app.get("/logout", async (req, res) => {
   console.log("logging out...");
