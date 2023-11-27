@@ -669,6 +669,53 @@ app.delete("/admin/delete/:option/:id", isAdmin, async (req, res) => {
   });
 });
 
+app.get("/nurse/search/schedule", isNurse, async (req, res) => {
+  console.log("getting nurse schedule...");
+  const idnurse = req.session.iduser;
+
+  try {
+    // getting nurse schedule
+    console.log("getting nurse schedule...");
+    const query = `
+    SELECT t.dateinfo, a.idassignedTo
+    FROM timeslot t
+    INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
+    WHERE a.nurse_id = ? AND a.onCancel = 0 ORDER BY t.dateinfo DESC`;
+    const result = await queryAsync(query, [idnurse]);
+    console.log(result);
+    console.log("getting nurse schedule done.");
+
+    return res.send(result);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
+app.delete("/nurse/remove/schedule/:id", isNurse, async (req, res) => {
+  console.log("removing nurse schedule...");
+  const scheduleId = req.params.id;
+  console.log("scheduleId: ", scheduleId);
+  try {
+    // update assignedTo onCancel
+    console.log("updating assignedTo...");
+    const query1 = `UPDATE assignedTo SET onCancel = 1 WHERE idassignedTo = ?`;
+    await queryAsync(query1, [scheduleId]);
+    console.log("updating assignedTo done.");
+
+    // add cancelled schedule
+    console.log("adding cancelled schedule...");
+    const query2 = `INSERT INTO cancel (assignedTo_id) VALUES (?)`;
+    await queryAsync(query2, [scheduleId]);
+    console.log("adding cancelled schedule done.");
+
+    return res.send(true);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
+
 // only getting the available vaccine
 app.get("/vaccine", async (req, res) => {
   console.log("getting vaccine...");
