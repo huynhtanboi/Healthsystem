@@ -20,7 +20,7 @@ const Home = () => {
               Minimally invasive procedures for chronic conditions, and stroke
               care without the hospital stay.
             </div>
-            <Link className="link" to="/about">
+            <Link className="link" to="/appointment">
               Make an appointment
             </Link>
           </div>

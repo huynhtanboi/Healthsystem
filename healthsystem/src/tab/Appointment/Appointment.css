@@ -1,0 +1,127 @@
+.appointment {
+  margin: 3% 0%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.appointment-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 70%;
+  gap: 2rem;
+  background-color: #04708b23;
+  border-radius: 1rem;
+  padding: 3% 0rem;
+}
+
+.appointment-time {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+  gap: 5rem;
+  width: 100%;
+}
+
+.appointment button {
+  color: black;
+}
+
+.appointment .react-calendar {
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: #ffffffd0;
+  border: none;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  color: black;
+}
+
+.appointment .time-schedule {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 30%;
+  margin-top: 2rem;
+}
+
+.appointment .time {
+  text-align: center;
+  color: black;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.appointment .time-title {
+  text-align: center;
+  color: #046f8b;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.appointment .title {
+  padding: 0rem;
+  margin: 0rem;
+  color: #046f8b;
+}
+
+.appointment .time-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.appointment .time-item {
+  width: 8rem;
+  color: #046f8b;
+  background-color: #ffffffd5;
+}
+
+.appointment .react-calendar__tile--active:enabled:focus,
+.appointment .react-calendar__tile--active {
+  background-color: rgba(0, 128, 0, 0.637);
+  color: white;
+}
+
+.appointment .react-calendar__tile--now {
+  background-color: rgba(0, 128, 0, 0.171);
+}
+
+.appointment .time-item:focus {
+  background-color: rgba(0, 128, 0, 0.637);
+  color: white;
+}
+
+.appointment .request-btn {
+  background: linear-gradient(130deg, #04708b 70%, rgba(0, 128, 0, 0.42));
+  color: white;
+}
+
+.appointment .disabled {
+  background-color: #e6e5e5;
+  color: #ff0000;
+}
+
+.appointment select {
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  padding: 0.25rem 0.25rem;
+  font-size: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.48);
+  margin-top: 1rem;
+}

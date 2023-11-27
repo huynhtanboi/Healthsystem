@@ -4,31 +4,31 @@ import { useState } from "react";
 
 const AddNurse = () => {
   const [formData, setFormData] = useState({
-    Fname: '',
-    MI: '',
-    Lname: '',
-    EmployeeID: '',
-    Age: '',
-    Gender: '',
-    Phone: '',
-    Address: '',
-    Username: '',
-    Password: '',
+    Fname: "",
+    MI: "",
+    Lname: "",
+    EmployeeID: "",
+    Age: "",
+    Gender: "",
+    Phone: "",
+    Address: "",
+    Username: "",
+    Password: "",
   });
 
   const handleSubmit = async () => {
     console.log("clicked");
 
-    const response = await fetch('http://localhost:3600/admin/addnurse', {
-      method: 'POST',
+    const response = await fetch("http://localhost:3600/admin/addnurse", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     });
 
     const data = await response.json();
-    
+
     console.log("Response data:", data);
 
     if (data) {
@@ -37,16 +37,16 @@ const AddNurse = () => {
     } else {
       alert("Something went wrong! Try again or call the IT supports.");
       setFormData({
-        Fname: '',
-        MI: '',
-        Lname: '',
-        EmployeeID: '',
-        Age: '',
-        Gender: '',
-        Phone: '',
-        Address: '',
-        Username: '',
-        Password: '',
+        Fname: "",
+        MI: "",
+        Lname: "",
+        EmployeeID: "",
+        Age: "",
+        Gender: "",
+        Phone: "",
+        Address: "",
+        Username: "",
+        Password: "",
       });
     }
   };
@@ -152,9 +152,7 @@ const AddNurse = () => {
               required
             />
           </label>
-          <button onClick={handleSubmit}>
-            Add Nurse
-            </button>
+          <button onClick={handleSubmit}>Add Nurse</button>
         </form>
       </div>
     </div>

@@ -7,7 +7,7 @@ const MyShedule = () => {
 
   useEffect(() => {
     // Fetch available time slots from the backend
-    fetch("http://localhost:3001/timeslots")
+    fetch("http://localhost:3600/timeslots")
       .then((response) => response.json())
       .then((data) => setTimeSlots(data));
   }, []);

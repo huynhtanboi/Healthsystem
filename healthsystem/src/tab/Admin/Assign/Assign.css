@@ -1,0 +1,67 @@
+.assign .assign-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 5rem;
+  color: #000;
+}
+
+.assign .search-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: center;
+}
+
+.assign input {
+  padding: 0.5rem 1rem;
+  width: 30rem;
+  background-color: #ffffffe4;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  color: #000;
+}
+
+.assign select {
+  padding: 0.5rem 1rem;
+  background-color: #ffffffe4;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  color: #000;
+}
+
+.assign .info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.assign .info {
+  position: relative;
+  background-color: #93c9d659;
+  border-radius: 1rem;
+  padding: 1.5rem 2rem;
+  width: 50rem;
+}
+
+.assign .info:hover {
+  transform: translateY(-0.5rem);
+  transition: all 0.3s ease-in-out;
+}
+
+.assign .icons {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  top: 1rem;
+  right: 2rem;
+  color: rgb(50, 93, 116);
+}
+
+.assign .icon-item {
+  cursor: pointer;
+}

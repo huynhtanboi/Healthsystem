@@ -1,0 +1,78 @@
+.nurse {
+  color: black;
+  margin: 6rem 0rem;
+  background-color: #04708b23;
+  padding: 2rem 0rem;
+  margin: 4rem 4rem;
+  border-radius: 1rem;
+}
+
+.nurse .head {
+  width: 6%;
+}
+
+.nurse .nurse-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.nurse img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #fff;
+  background-color: #fff;
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.nurse .head {
+  text-align: center;
+  margin-top: 3%;
+  display: flex;
+  flex-direction: column;
+}
+
+.nurse .head .name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nurse .nurse-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: center;
+}
+.nurse form {
+  width: 70rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 2rem 2rem;
+}
+
+.nurse .each-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.nurse input {
+  padding: 10px;
+  background-color: #ffffffe4;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  color: #000;
+}
+
+.nurse button {
+  background: linear-gradient(130deg, #04708b 70%, rgba(0, 128, 0, 0.4));
+}
+
+.nurse .disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}

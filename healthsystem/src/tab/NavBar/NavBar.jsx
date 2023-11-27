@@ -6,6 +6,8 @@ import "./NavBar.css";
 const NavBar = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState("");
+  const [role, setRole] = useState("");
+  const [id, setId] = useState(0);
   // check logged in
   const navigate = useNavigate();
   useEffect(() => {
@@ -19,11 +21,13 @@ const NavBar = () => {
       if (data.loggedIn) {
         setLoggedIn(true);
         setUser(data.user);
-        navigate("/");
+        setRole(data.role);
+        setId(data.iduser);
+        // navigate("/");
       }
     };
     checkLogin();
-  }, [loggedIn, user, navigate]);
+  }, [loggedIn, user, role, navigate]);
 
   const hamMenu = () => {
     let x = document.getElementById("topnav");
@@ -63,13 +67,19 @@ const NavBar = () => {
               alt="UIH logo"
             />
           </Link>
-          <Link>Request an appointment</Link>
+          <Link to="/appointment">Request an appointment</Link>
         </div>
 
         <div className="menu">
-          <Link className="link" to="/myschedule">
-            My Schedule
-          </Link>
+          {loggedIn && role === "admin" ? (
+            <Link className="link" to="/admin/assign">
+              Assign schedule
+            </Link>
+          ) : (
+            <Link className="link" to="/myschedule">
+              My schedule
+            </Link>
+          )}
           <Link className="link" to="/about">
             About Us
           </Link>
@@ -88,12 +98,21 @@ const NavBar = () => {
               </Link>
               <div id="topnav">
                 <div className="topnav-container">
-                  <Link className="drop-link" to="myschedule">
-                    My schedule
-                  </Link>
-                  <Link className="drop-link" to="/profile">
-                    Profile
-                  </Link>
+                  {role !== "admin" && (
+                    <Link className="drop-link" to="myschedule">
+                      My schedule
+                    </Link>
+                  )}
+                  {role === "patient" && (
+                    <Link className="drop-link" to="/profile/patient">
+                      Profile
+                    </Link>
+                  )}
+                  {role === "nurse" && (
+                    <Link className="drop-link" to="/profile/nurse">
+                      Profile
+                    </Link>
+                  )}
                   <Link className="drop-link" onClick={handleLogout}>
                     Logout
                   </Link>
@@ -103,7 +122,7 @@ const NavBar = () => {
           )}
         </div>
       </div>
-      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user }}>
+      <LoginContext.Provider value={{ loggedIn, setLoggedIn, user, role, id }}>
         <Outlet />
       </LoginContext.Provider>
     </div>

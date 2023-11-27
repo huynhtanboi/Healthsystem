@@ -1,18 +1,4 @@
-:root {
-    --primary-color: #046f8b; 
-    --secondary-color: #9cd2df; 
-    --third-color: #d5d5d5;
-  }
-  body, html {
-    height: 100%;
-    margin: 0;
-  } 
-  body { 
-    background: linear-gradient(-45deg,var( --third-color)0%, var(--secondary-color) 0%, var(--primary-color) 100%);
-    overflow: hidden;
-  } 
-  
-  .addvaccine {
+.addvaccine {
   margin: 10rem 0rem;
   display: flex;
   flex-direction: column;

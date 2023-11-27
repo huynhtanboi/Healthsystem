@@ -10,20 +10,12 @@ import Login from "./tab/Login/Login";
 import Signup from "./tab/Signup/Signup";
 import AddNurse from "./tab/Admin/AddNurse/AddNurse";
 import AddVaccine from "./tab/AddVaccine/AddVaccine";
-import { useEffect, useState } from "react";
+import Appointment from "./tab/Appointment/Appointment";
+import ProfilePatient from "./tab/ProfilePatient/ProfilePatient";
+import ProfileNurse from "./tab/ProfileNurse/ProfileNurse";
+import Assign from "./tab/Admin/Assign/Assign";
 
 function App() {
-  // const [login, setLogin] = useState(false);
-
-  // useEffect(() => {
-  //   const checkLogin = async () => {
-  //     const response = await fetch("http://localhost:3600");
-  //     const data = await response.json();
-  //     setLogin(data.login);
-  //   };
-  //   checkLogin();
-  // }, [login]);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -35,7 +27,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin/addnurse" element={<AddNurse />} />
-          <Route path="/admin/addvaccine" element={<AddVaccine/>}/>
+          <Route path="/admin/addvaccine" element={<AddVaccine />} />
+          <Route path="/admin/assign" element={<Assign />} />
+          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/profile/patient" element={<ProfilePatient />} />
+          <Route path="/profile/nurse" element={<ProfileNurse />} />
         </Route>
       </Routes>
     </BrowserRouter>
