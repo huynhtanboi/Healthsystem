@@ -556,6 +556,28 @@ app.get("/vaccine", async (req, res) => {
   });
 });
 
+app.get("/nurse/assign/:date", async (req, res) => {
+  const date = req.params.date;
+  const query = `SELECT * FROM timeslot WHERE dateinfo LIKE '${date}%'`;
+  db.query(query, (err, result) => {
+    if (err) {
+      return res.send({ err: err });
+    }
+    // process availabilities
+    const availabilities = [];
+    if (!result.length) return res.send([]);
+    for (let i = 0; i < result.length; i++) {
+      const { idtimeslot, numOfPeople, numOfNurse, dateinfo } = result[i];
+      const time = dateinfo.split(" ")[1];
+      if (numOfPeople < numOfNurse * 10 && numOfPeople < 100) {
+        availabilities.push(time);
+      }
+    }
+
+    return res.send(availabilities);
+  });
+});
+
 app.get("/logout", async (req, res) => {
   console.log("logging out...");
   req.session.destroy(function (err) {

@@ -67,7 +67,12 @@ const NavBar = () => {
               alt="UIH logo"
             />
           </Link>
-          <Link to="/appointment">Request an appointment</Link>
+          {role === "patient" && (
+            <Link to="/appointment">Request an appointment</Link>
+          )}
+          {role === "nurse" && (
+            <Link to="/nurse/assign">Choose a time slot</Link>
+          )}
         </div>
 
         <div className="menu">
