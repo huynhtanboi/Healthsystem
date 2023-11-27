@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "boihuynh",
+  password: "thanhtai",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -128,21 +128,10 @@ app.post("/signup", async (req, res) => {
 
 app.post("/admin/addvaccine", async (req, res) => {
   console.log("Adding vaccine...");
-  const {
-    name,
-    companyName,
-    doseRequired,
-    availableDose,
-    description,
-  } = req.body;
+  const { name, companyName, doseRequired, availableDose, description } =
+    req.body;
 
-  console.log(
-    name,
-    companyName,
-    doseRequired,
-    availableDose,
-    description
-  );
+  console.log(name, companyName, doseRequired, availableDose, description);
 
   // Check if the vaccine with the same idVaccine already exists
   const checkQuery = "SELECT * FROM Vaccine WHERE name = ?";
@@ -170,7 +159,7 @@ app.post("/admin/addvaccine", async (req, res) => {
         "INSERT INTO Vaccine ( name, CompanyName, numDoseRequire, availableDose, TextualDes) VALUES (?,?,?,?,?)";
       db.query(
         insertQuery,
-        [ name, companyName, doseRequired, availableDose, description],
+        [name, companyName, doseRequired, availableDose, description],
         (insertErr) => {
           if (insertErr) {
             console.log(insertErr);
@@ -196,8 +185,7 @@ app.post("/admin/addnurse", async (req, res) => {
     Phone,
     Address,
     Username,
-    Password
-
+    Password,
   } = req.body;
   console.log(
     Fname,
@@ -225,7 +213,7 @@ app.post("/admin/addnurse", async (req, res) => {
       Phone,
       Address,
       Username,
-      Password
+      Password,
     ],
     (err, result) => {
       if (err) {
@@ -234,7 +222,6 @@ app.post("/admin/addnurse", async (req, res) => {
       }
       console.log("true");
       res.redirect("/admin/addnurse");
-
     }
   );
 });
