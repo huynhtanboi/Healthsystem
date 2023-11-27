@@ -14,6 +14,8 @@ import Appointment from "./tab/Appointment/Appointment";
 import ProfilePatient from "./tab/ProfilePatient/ProfilePatient";
 import ProfileNurse from "./tab/ProfileNurse/ProfileNurse";
 import Assign from "./tab/Admin/Assign/Assign";
+import NurseSchedule from "./tab/NurseSchedule/NurseSchedule";
+
 
 function App() {
   return (
@@ -32,6 +34,7 @@ function App() {
           <Route path="/appointment" element={<Appointment />} />
           <Route path="/profile/patient" element={<ProfilePatient />} />
           <Route path="/profile/nurse" element={<ProfileNurse />} />
+          <Route path="/nurse/schedule" element={<NurseSchedule />} />
         </Route>
       </Routes>
     </BrowserRouter>
