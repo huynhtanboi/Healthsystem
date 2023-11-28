@@ -81,6 +81,10 @@ const NavBar = () => {
               View schedules
             </Link>
           )}
+          {loggedIn && role === "nurse" && (          
+          <Link className="link" to="/nurse/onCancel">
+            Pending Schedule
+          </Link>)}  
           <Link className="link" to="/about">
             About Us
           </Link>
