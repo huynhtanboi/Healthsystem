@@ -11,11 +11,6 @@ const NurseSchedule = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loggedIn) {
-      alert("You are not logged in!");
-      navigate("/login");
-    }
-
     const fetchNurseSchedules = async () => {
       try {
         const response = await fetch(
@@ -78,6 +73,9 @@ const NurseSchedule = () => {
   return (
     <div className="nurse-schedule-container">
       <h2>Nurse Schedules</h2>
+      {nurseSchedules.length === 0 && (
+        <div className="no-schedule">No schedule found.</div>
+      )}
       <div className="schedule-list">
         {nurseSchedules.map((schedule, index) => (
           <div className="schedule-item" key={index}>

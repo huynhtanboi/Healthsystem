@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "boihuynh",
+  password: "thanhtai",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -762,21 +762,23 @@ app.delete("/nurse/remove/schedule/:id", isNurse, async (req, res) => {
   }
 });
 
-app.get("/nurse/cancelschedule", isNurse, async(req,res)=>{
+app.get("/nurse/cancelschedule", isNurse, async (req, res) => {
   console.log("getting cancel schedule");
-  try{
+  try {
     //getting cancel schedule
-    const query1= `SELECT * from cancel`;
+    const query1 = `
+    SELECT a.idassignedTo, t.dateinfo from timeslot t
+    INNER JOIN assignedTo a ON t.idtimeslot = a.timeslot_id
+    INNER JOIN cancel c ON a.idassignedTo = c.assignedTo_id ORDER BY t.dateinfo DESC`;
     const result = await queryAsync(query1, []);
     console.log(result);
     console.log("getting cancel schedule done");
-    return res.send(true);
-  }
-  catch(error){
+    return res.send(result);
+  } catch (error) {
     console.error("Error:", err);
     return res.send({ err: err });
   }
-})
+});
 
 app.post("/nurse/cancelschedule/:scheduleId", isNurse, async (req, res) => {
   console.log("checking nurse schedule...");
@@ -792,16 +794,15 @@ app.post("/nurse/cancelschedule/:scheduleId", isNurse, async (req, res) => {
 
     // update assignedTo nurse
     console.log("updating nurse id in assignedTo...");
-    const query3 = `UPDATE assignedTo SET nurse_id = ? WHERE idassignedTo = ?;`;
-    await queryAsync(query1, [idnurse, scheduleId]);
+    const query2 = `UPDATE assignedTo SET nurse_id = ? WHERE idassignedTo = ?;`;
+    await queryAsync(query2, [idnurse, scheduleId]);
     console.log("updating assignedTo done.");
 
     // DELETE cancelled schedule
     console.log("deleting cancelled schedule...");
-    const query2 = `Delete cancel where assignedTo_id = ?`;
-    await queryAsync(query2, [scheduleId]);
-    console.log("deltete cancelled schedule done.");
-    
+    const query3 = `Delete from cancel where assignedTo_id = ?`;
+    await queryAsync(query3, [scheduleId]);
+    console.log("delete cancelled schedule done.");
     return res.send(true);
   } catch (err) {
     console.error("Error:", err);
@@ -873,12 +874,12 @@ app.post("/nurse/assign", isNurse, async (req, res) => {
   console.log(time);
 
   try {
-    let timeslotId = null;
     // Check if timeslot exists
     console.log("checking timeslot...");
     const query = `SELECT * FROM timeslot WHERE dateinfo = ?`;
     const result = await queryAsync(query, [time]);
     console.log(result);
+    let timeslotId = result[0].idtimeslot;
     console.log("finished checking timeslot...");
 
     if (result?.length > 0) {
@@ -892,7 +893,7 @@ app.post("/nurse/assign", isNurse, async (req, res) => {
       console.log("creating new timeslot...");
       const query2 = `INSERT INTO timeslot (dateinfo, numOfPeople, numOfNurse) VALUES (?, ?, ?)`;
       const result1 = await queryAsync(query2, [time, 0, 1]);
-      console.log(result1);
+      console.log("result: ", result1);
       timeslotId = result1.insertId;
 
       console.log("finished creating new timeslot...");

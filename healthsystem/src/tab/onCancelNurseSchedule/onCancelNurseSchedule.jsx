@@ -1,20 +1,14 @@
 import { useEffect, useState, useContext } from "react";
-import { AiOutlineDelete } from "react-icons/ai";
 import { LoginContext } from "../../utils/utils";
 import { useNavigate } from "react-router-dom";
 import "./onCancelNurseSchedule.css";
 
-const onCancelSchedule = () => {
+const CancelNurseSchedule = () => {
   const [cancelSchedules, setCancelSchedule] = useState([]);
   const { loggedIn, user } = useContext(LoginContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loggedIn) {
-      alert("You are not logged in!");
-      navigate("/login");
-    }
-
     const fetchCancelSchedules = async () => {
       try {
         const response = await fetch(
@@ -36,11 +30,11 @@ const onCancelSchedule = () => {
         console.error("Error fetching cancel schedules:", error.message);
       }
     };
-
     fetchCancelSchedules();
-  },[loggedIn, navigate, user.nurseId]);
- 
+  }, [loggedIn, navigate, user.nurseId]);
+
   const handleCancelSchedule = async (scheduleId) => {
+    console.log("scheduleId", scheduleId);
     try {
       const response = await fetch(
         `http://localhost:3600/nurse/cancelschedule/${scheduleId}`,
@@ -49,7 +43,6 @@ const onCancelSchedule = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ nurseId }), // Send nurseId to replace in assignedTo table
           credentials: "include",
         }
       );
@@ -59,7 +52,7 @@ const onCancelSchedule = () => {
       }
 
       const data = await response.json();
-
+      console.log("Cancel schedule:", data);
       if (data) {
         alert("Schedule canceled successfully!");
         window.location.reload();
@@ -73,7 +66,10 @@ const onCancelSchedule = () => {
 
   return (
     <div className="nurse-schedule-container">
-      <h2>Cancel Schedules</h2>
+      <h2>Pick a pending schedule</h2>
+      {cancelSchedules.length === 0 && (
+        <div className="no-schedule">No pending schedule</div>
+      )}
       <div className="schedule-list">
         {cancelSchedules.map((schedule, index) => (
           <div className="schedule-item" key={index}>
@@ -85,7 +81,7 @@ const onCancelSchedule = () => {
                 className="cancel-button"
                 onClick={() => handleCancelSchedule(schedule?.idassignedTo)}
               >
-                Cancel
+                Pick
               </button>
             </div>
           </div>
@@ -95,4 +91,4 @@ const onCancelSchedule = () => {
   );
 };
 
-export default onCancelSchedule;
+export default CancelNurseSchedule;

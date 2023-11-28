@@ -81,10 +81,11 @@ const NavBar = () => {
               View schedules
             </Link>
           )}
-          {loggedIn && role === "nurse" && (          
-          <Link className="link" to="/nurse/onCancel">
-            Pending Schedule
-          </Link>)}  
+          {loggedIn && role === "nurse" && (
+            <Link className="link" to="/nurse/onCancel">
+              Pending Schedule
+            </Link>
+          )}
           <Link className="link" to="/about">
             About Us
           </Link>
@@ -103,11 +104,14 @@ const NavBar = () => {
               </Link>
               <div id="topnav">
                 <div className="topnav-container">
-                  {role === "patient" && (
-                    <Link className="drop-link" to="/profile/patient">
+                  {role === "patient" && [
+                    <Link className="drop-link" key={0} to="/profile/patient">
                       Profile
-                    </Link>
-                  )}
+                    </Link>,
+                    <Link className="drop-link" key={1} to="/myschedule">
+                      My schedule
+                    </Link>,
+                  ]}
                   {role === "nurse" && [
                     <Link className="drop-link" key={0} to="/profile/nurse">
                       Profile
