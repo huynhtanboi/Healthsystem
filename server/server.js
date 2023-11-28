@@ -9,7 +9,7 @@ import cookieParser from "cookie-parser";
 
 const db = mysql.createConnection({
   user: "root",
-  password: "thanhtai",
+  password: "boihuynh",
   host: "localhost",
   port: 3306,
   database: "health",
@@ -586,6 +586,52 @@ app.delete("/nurse/remove/schedule/:id", isNurse, async (req, res) => {
   }
 });
 
+app.get("/nurse/cancelschedule", isNurse, async(req,res)=>{
+  console.log("getting cancel schedule");
+  try{
+    //getting cancel schedule
+    const query1= `SELECT * from cancel`;
+    const result = await queryAsync(query1, []);
+    console.log(result);
+    console.log("getting cancel schedule done");
+    return res.send(true);
+  }
+  catch(error){
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+})
+
+app.post("/nurse/cancelschedule/:scheduleId", isNurse, async (req, res) => {
+  console.log("checking nurse schedule...");
+  const idnurse = req.session.iduser;
+  const scheduleId = req.params.scheduleId;
+  console.log("scheduleId: ", scheduleId);
+  try {
+    // update assignedTo onCancel
+    console.log("updating assignedTo...");
+    const query1 = `UPDATE assignedTo SET onCancel = 0 WHERE idassignedTo = ?`;
+    await queryAsync(query1, [scheduleId]);
+    console.log("updating assignedTo done.");
+
+    // update assignedTo nurse
+    console.log("updating nurse id in assignedTo...");
+    const query3 = `UPDATE assignedTo SET nurse_id = ? WHERE idassignedTo = ?;`;
+    await queryAsync(query1, [idnurse, scheduleId]);
+    console.log("updating assignedTo done.");
+
+    // DELETE cancelled schedule
+    console.log("deleting cancelled schedule...");
+    const query2 = `Delete cancel where assignedTo_id = ?`;
+    await queryAsync(query2, [scheduleId]);
+    console.log("deltete cancelled schedule done.");
+    
+    return res.send(true);
+  } catch (err) {
+    console.error("Error:", err);
+    return res.send({ err: err });
+  }
+});
 // only getting the available vaccine
 app.get("/vaccine", async (req, res) => {
   console.log("getting vaccine...");
